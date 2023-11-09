@@ -26,6 +26,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("SELECT b FROM Book b WHERE b.publicationYear < :publicationYear")
     List<Book> findBeforeYear(long publicationYear);
+
+    @Query("SELECT b FROM Book b WHERE b.pageNum BETWEEN :pageNum - 50 AND :pageNum + 50")
+    List<Book> findAroundPageNum(@Param("pageNum") long pageNum);
 }
 
 
