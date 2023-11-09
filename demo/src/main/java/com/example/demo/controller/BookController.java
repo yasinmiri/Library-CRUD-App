@@ -99,6 +99,22 @@ public class BookController {
         }
     }
 
+    @GetMapping("/getBooksByPageNum/{pageNum}")
+    public ResponseEntity<List<Book>> BooksByPageNum(@PathVariable long pageNum) {
+        try {
+            List<Book> bookListAroundPageNum = bookRepository.findAroundPageNum(pageNum);
+            if (bookListAroundPageNum.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            else {
+                return new ResponseEntity<>(bookListAroundPageNum, HttpStatus.OK);
+            }
+        } catch (Exception e){
+            log.error("error occured in repository: " + e);
+            throw e;
+        }
+    }
+
     @PostMapping("/addBook")
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
         try {
