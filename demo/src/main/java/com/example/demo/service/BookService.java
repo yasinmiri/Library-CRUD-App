@@ -2,24 +2,27 @@ package com.example.demo.service;
 
 import com.example.demo.model.Book;
 import com.example.demo.repo.BookRepository;
+import jakarta.persistence.Cacheable;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-
 @Service
-public class BookService {
 
+@Configuration
+
+public class BookService {
 
     @Autowired
     BookRepository bookRepository;
@@ -55,7 +58,6 @@ public class BookService {
     }
 
     public ResponseEntity<List<Book>> getBookByAuthor(@PathVariable String author) {
-
         try {
             List<Book> bookListByAuthor = bookRepository.findByAuthor(author);
             if (bookListByAuthor.isEmpty()) {
@@ -144,6 +146,7 @@ public class BookService {
     }
 
     public ResponseEntity<HttpStatus> deleteBook(@PathVariable Long id) {
+
         try {
             bookRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
