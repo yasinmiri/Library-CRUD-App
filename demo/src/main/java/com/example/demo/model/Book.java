@@ -6,7 +6,6 @@ import lombok.*;
 
 @Entity
 @Table(name="Books")
-@NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
@@ -29,4 +28,33 @@ public class Book {
     @Column
     private long publicationYear;
 
+    public Book() {
+    }
+
+    public Book(String title, String author, long pageNum, long publicationYear) {
+        this.title = title;
+        this.author = author;
+        this.pageNum = pageNum;
+        this.publicationYear = publicationYear;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setPageNum(long pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public void setPublicationYear(long publicationYear) {
+        this.publicationYear = publicationYear;
+    }
 }

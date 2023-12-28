@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Book;
 import com.example.demo.repo.BookRepository;
+import com.example.demo.service.BookService;
+import jakarta.persistence.Cacheable;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,146 +22,60 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class BookController {
 
-
     @Autowired
-    BookRepository bookRepository;
+    BookService bookService;
+
+    @GetMapping("/health")
+    public String health(){
+        return bookService.health();
+    }
 
     @GetMapping("/getAllBooks")
     public ResponseEntity<List<Book>> getAllBooks() {
-        try {
-            List<Book> bookList = new ArrayList<>();
-            bookRepository.findAll().forEach(bookList::add);
-
-            if (bookList.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-
-            return new ResponseEntity<>(bookList, HttpStatus.OK);
-        } catch(Exception ex) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return bookService.getAllBooks();
     }
 
     @GetMapping("/getBookById/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {
-        Optional<Book> bookObj = bookRepository.findById(id);
-        if (bookObj.isPresent()) {
-            return new ResponseEntity<>(bookObj.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return bookService.getBookById(id);
     }
 
     @GetMapping("/getBookByAuthor/{author}")
     public ResponseEntity<List<Book>> getBookByAuthor(@PathVariable String author) {
-
-        try {
-            List<Book> bookListByAuthor = bookRepository.findByAuthor(author);
-            if (bookListByAuthor.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            else {
-                return new ResponseEntity<>(bookListByAuthor, HttpStatus.OK);
-            }
-        } catch (Exception e){
-            log.error("error occured in repository: " + e);
-            throw e;
-        }
+        return bookService.getBookByAuthor(author);
     }
 
     @GetMapping("/getBookByTitle/{title}")
     public ResponseEntity<List<Book>> getBookByTitle(@PathVariable String title) {
-        try {
-            List<Book> bookListByTitle = bookRepository.findByTitle(title);
-            if (bookListByTitle.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            else {
-                return new ResponseEntity<>(bookListByTitle, HttpStatus.OK);
-            }
-        } catch (Exception e){
-            log.error("error occured in repository: " + e);
-            throw e;
-        }
+        return bookService.getBookByTitle(title);
     }
 
     @GetMapping("/getBooksBeforeYear/{publicationYear}")
     public ResponseEntity<List<Book>> getBooksBeforeYear(@PathVariable long publicationYear) {
-        try {
-            List<Book> bookListBeforeYear = bookRepository.findBeforeYear(publicationYear);
-            if (bookListBeforeYear.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            else {
-                return new ResponseEntity<>(bookListBeforeYear, HttpStatus.OK);
-            }
-        } catch (Exception e){
-            log.error("error occured in repository: " + e);
-            throw e;
-        }
+        return bookService.getBooksBeforeYear(publicationYear);
     }
 
     @GetMapping("/getBooksByPageNum/{pageNum}")
     public ResponseEntity<List<Book>> BooksByPageNum(@PathVariable long pageNum) {
-        try {
-            List<Book> bookListAroundPageNum = bookRepository.findAroundPageNum(pageNum);
-            if (bookListAroundPageNum.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            else {
-                return new ResponseEntity<>(bookListAroundPageNum, HttpStatus.OK);
-            }
-        } catch (Exception e){
-            log.error("error occured in repository: " + e);
-            throw e;
-        }
+        return bookService.BooksByPageNum(pageNum);
     }
 
     @PostMapping("/addBook")
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
-        try {
-            Book bookObj = bookRepository.save(book);
-            return new ResponseEntity<>(bookObj, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return bookService.addBook(book);
     }
 
     @PostMapping("/updateBook/{id}")
     public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
-        try {
-            Optional<Book> bookData = bookRepository.findById(id);
-            if (bookData.isPresent()) {
-                Book updatedBookData = bookData.get();
-                updatedBookData.setTitle(book.getTitle());
-                updatedBookData.setAuthor(book.getAuthor());
-
-                Book bookObj = bookRepository.save(updatedBookData);
-                return new ResponseEntity<>(bookObj, HttpStatus.CREATED);
-            }
-
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return bookService.updateBook(id, book);
     }
 
     @DeleteMapping("/deleteBookById/{id}")
     public ResponseEntity<HttpStatus> deleteBook(@PathVariable Long id) {
-        try {
-            bookRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return bookService.deleteBook(id);
     }
     @DeleteMapping("/deleteAllBooks")
     public ResponseEntity<HttpStatus> deleteAllBooks() {
-        try {
-            bookRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return bookService.deleteAllBooks();
     }
 }
